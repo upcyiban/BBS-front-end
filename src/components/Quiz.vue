@@ -1,6 +1,6 @@
 <template>
   <div class="main-container dy_flex">
-    <textarea id="byDY" placeholder="
+    <textarea autofocus id="byDY" placeholder="
     
   提供你的疑惑、问题相关的详细信息，以便老师能更好的帮助到你">
     
