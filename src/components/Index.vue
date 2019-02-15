@@ -23,8 +23,9 @@ export default {
   },
   data () {
     return {
-      user: '113',
-      pageinfos: []
+      yb_uid: '113',
+      pageinfos: [],
+      pageNum: 1
     }
   },
   methods: {
@@ -34,6 +35,12 @@ export default {
         user: this.yb_uid,
         page: 1
       }
+      if (this.pageNum == 2){
+        url = 'http://yb.upc.edu.cn/forum/getSelf'
+        data = {
+          user: this.yb_uid
+        }
+      }
       this.$axios.post(url, data).then(rsp=>{
         console.log(rsp)
         Bus.$emit('pageInfos', rsp.data.info)
@@ -41,6 +48,9 @@ export default {
     }
   },
   created () {
+    Bus.$on("pageNum", msg => {
+      this.pageNum = msg
+    })
     var verify_request = this.$GetQueryString("verify_request")
     var yb_uid = this.$GetQueryString("yb_uid")
     sessionStorage.setItem("verify_request", verify_request)
@@ -59,11 +69,17 @@ export default {
         "&state=5050"
     } else {
       console.log(verify_request)
+      sessionStorage.setItem('userId', '113')
       this.getPageInfos()
     }
   },
   mounted () {
     Bus.$emit('pageInfo', this.pageinfos)
+  },
+  watch: {
+    pageNum (val, oldval) {
+      this.getPageInfos()
+    }
   }
 }
 </script>

@@ -104,7 +104,7 @@ export default {
     fetchdata(loaded) {
       console.log('上拉事件')
       let url = 'http://yb.upc.edu.cn/forum/getAll'
-      //this.page ++
+      this.page ++
       let data = {
         user: this.yb_uid,
         page: this.page
