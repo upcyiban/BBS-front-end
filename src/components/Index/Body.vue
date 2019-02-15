@@ -1,14 +1,14 @@
 <template>
   <div class="main-container" v-if="isRouterAlive">
     <pull-to :top-load-method="refresh" :bottom-load-method="fetchdata">
-      <div v-for="i in 20" :key="i" class="message-container">
+      <div v-for="item in pageInfos" :key="item.key" class="message-container" @click="goToPosts(item.id, item)">
         <div class="user-container inner-center">
           <div class="avatar inner-center">
             <img src="../../assets/images/头像.jpg" alt="">
           </div>
           <div class="nick-time">
-            <div class="nickname">悲伤的小企鹅</div>
-            <div class="time">14:37</div>
+            <div class="nickname">{{item.user}}</div>
+            <div class="time">{{item.time}}</div>
           </div>
           <div class="isopen-container">
             <div class="isopen inner-center" v-show="isopen">
@@ -18,13 +18,13 @@
         </div>
         <div class="theme-container inner-center">
           <div class="theme">
-            a安安啊啊a安安啊啊a安安啊啊a安安啊啊a安安啊啊a安安啊啊a安安啊啊a安安啊啊安啊啊a安安啊啊a安安啊啊a安安啊啊安啊啊a安安啊啊a安安啊啊a安安啊啊
+            {{item.details}}
           </div>
         </div>
-        <div class="first-comment-container inner-center">
+        <div class="first-comment-container inner-center" v-if="item.f_comment">
           <div class="first-comment-frame inner-center">
             <div class="first-comment">
-              <span>吴老师：</span>a安安啊啊a安安啊啊a安a安安啊啊a安安啊啊a安a安安啊啊a安安啊啊a安a安安啊啊a安安啊啊a安
+              <span>{{item.f_comment.user}}：</span>{{item.f_comment.details}}
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import Bus from "../../assets/eventBus.js";
+import Bus from "../../assets/eventBus.js"
 import PullTo from 'vue-pull-to'
 
 const TOP_DEFAULT_CONFIG = {
@@ -64,9 +64,37 @@ export default {
   components: {
     PullTo,
   },
+  data () {
+    return {
+      isRouterAlive: true,
+      isopen: false,
+      pageNum: 1,
+      pageInfos: [{
+        user: '',
+        details: '',
+        time: '',
+        f_comment: {
+          user: '',
+          details: '',
+          time: ''
+        }
+      }],
+      yb_uid: '11364041',
+      page: 1,
+    }
+  },
+  created() {
+    Bus.$on("pageNum", msg => {
+      this.pageNum = msg
+    })
+    Bus.$on("pageInfos", msg => {
+      this.pageInfos = msg
+      console.log(msg)
+    })
+  },
   methods: {
     refresh(loaded) {
-      console.log('上拉事件')
+      console.log('下拉事件')
       setTimeout(() => {
         this.isRouterAlive = false
         this.$nextTick(() => (this.isRouterAlive = true))
@@ -74,21 +102,34 @@ export default {
       }, 400)
     },
     fetchdata(loaded) {
-      console.log('下拉事件')
-      loaded('done')
+      console.log('上拉事件')
+      let url = 'http://yb.upc.edu.cn/forum/getAll'
+      //this.page ++
+      let data = {
+        user: this.yb_uid,
+        page: this.page
+      }
+      this.$axios.post(url, data).then(rsp=>{
+        console.log(rsp.data.info)
+        if (rsp.data.info) {
+          let infos = this.pageInfos.concat(rsp.data.info)
+          this.pageInfos = infos
+        }
+        setTimeout(() => {
+          loaded('done')
+        }, 200)
+      })
+    },
+    goToPosts (PostsId, postinfo) {
+      this.$router.push({
+        path:'/posts',
+        query:{
+          id: PostsId,
+          user: this.yb_uid,
+          postsinfo: postinfo
+        }
+      })
     }
-  },
-  data () {
-    return {
-      isRouterAlive: true,
-      isopen: false,
-      pageNum: 1
-    }
-  },
-  created() {
-    Bus.$on("pageNum", msg => {
-      this.pageNum = msg
-    })
   },
   watch: {
     pageNum (val, oldval) {
@@ -106,7 +147,7 @@ export default {
 <style scoped>
 .main-container {
 	width: 100%;
-  height: 82%;
+  height: 80%;
   background: white;
   overflow-y: scroll;
   display: flex;

@@ -13,6 +13,7 @@
 <script>
 import Header from './Index/Header.vue'
 import Body from './Index/Body.vue'
+import Bus from "../assets/eventBus.js"
 
 export default {
   name: 'index',
@@ -20,12 +21,49 @@ export default {
     Header: Header,
     Body: Body
   },
-  methods: {
-  },
   data () {
     return {
-
+      user: '113',
+      pageinfos: []
     }
+  },
+  methods: {
+    getPageInfos () {
+      let url = 'http://yb.upc.edu.cn/forum/getAll'
+      let data = {
+        user: this.yb_uid,
+        page: 1
+      }
+      this.$axios.post(url, data).then(rsp=>{
+        console.log(rsp)
+        Bus.$emit('pageInfos', rsp.data.info)
+      })
+    }
+  },
+  created () {
+    var verify_request = this.$GetQueryString("verify_request")
+    var yb_uid = this.$GetQueryString("yb_uid")
+    sessionStorage.setItem("verify_request", verify_request)
+    var APPID = '32eade4df8222ddb'
+    var CALLBACK = 'http://f.yiban.cn/iapp306340'
+    if (
+      verify_request == -1 ||
+      verify_request == "" ||
+      verify_request == null
+    ) {
+      window.location.href =
+        "https://openapi.yiban.cn/oauth/authorize?client_id=" +
+        APPID +
+        "&redirect_uri=" +
+        CALLBACK +
+        "&state=5050"
+    } else {
+      console.log(verify_request)
+      this.getPageInfos()
+    }
+  },
+  mounted () {
+    Bus.$emit('pageInfo', this.pageinfos)
   }
 }
 </script>
