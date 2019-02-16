@@ -147,7 +147,7 @@ export default {
 <style scoped>
 .main-container {
 	width: 100%;
-  height: 80%;
+  height: 81%;
   background: white;
   overflow-y: scroll;
   display: flex;

@@ -62,16 +62,23 @@
         </div>
       </div>
     </div>
-    <div class="reply-container">
+    <div class="reply-container" id="reply">
       <div class="comment-function">
         <div class="toSomebody-container">
           <div v-show="!isToOwner">
-            回复给：{{YBID_a}}
+            回复{{YBID_a}}
             <span class="close" @click="ToOwner">X</span>
           </div>
         </div>
         <div class="private-button">
-          <input type="checkbox" v-model="isprivate">私密
+          <div class="radios-conatainer">
+            <div class="option-container" v-for="i in 2" :key="i" @click="setprivate(i)">
+              <div class="radio inner-center">
+                <div class="radio-inner" :class="radioinner[i-1]">
+                </div>
+              </div>{{optionInfos[i-1]}}
+            </div>
+          </div>
         </div>
       </div>
       <div class="comment inner-center">
@@ -79,6 +86,7 @@
         <button @click="submitComment">发送</button>
       </div>
     </div>
+    <div class="over-main"  v-show="!isToOwner" @click="ToOwner"></div>
   </div>
 </template>
 
@@ -90,14 +98,15 @@ export default {
       postOwner: null,
       comments: null,
       commentContent: "",
-      isprivate: false,
       YBID_t: "",
       YBID_a: "",
       question: "",
       comment: "",
       details: "",
       onshow: 1,
-      isToOwner: true
+      isToOwner: true,
+      optionInfos: ['私密', '公开'],
+      radioinner: ['notbeSelect', 'beSelect']
     };
   },
   created() {
@@ -119,6 +128,7 @@ export default {
       console.log(rsp);
       this.comments = rsp.data.info;
     });
+    this.fixStyle()
   },
   methods: {
     toEditComment(YBID_a, comment, isToOwner) {
@@ -128,14 +138,10 @@ export default {
       this.isToOwner = isToOwner;
       this.$nextTick(() => {
         this.$refs.gain.focus();
+        this.fixStyle()
       });
     },
     submitComment() {
-      if (this.isprivate == true) {
-        this.onshow = 0;
-      } else if (this.isprivate == false) {
-        this.onshow = 1;
-      }
       if (this.isToOwner == true) {
         this.comment = -1;
       }
@@ -150,11 +156,32 @@ export default {
       let url = "http://yb.upc.edu.cn/forum/comment";
       this.$axios.post(url, data).then(rsp => {
         console.log(rsp);
+        if (rsp.data.code == 1) {
+          alert('回复成功！')
+        }
       });
     },
     ToOwner() {
       this.isToOwner = true;
       this.YBID_a = parseInt(this.$route.query.postsinfo.user);
+    },
+    setprivate (i) {
+      console.log(11)
+      this.onshow = (i + 1) % 2
+      for (let n = 0;n < 2;n++) {
+        this.$set(this.radioinner, n, 'notbeSelect')
+        if (n == i-1) {
+          this.$set(this.radioinner, n, 'beSelect')
+        }
+      }
+    },
+    fixStyle() {
+      var nowClientHeight = document.documentElement.clientHeight || document.body.clientHeight
+      var submitHeight = (nowClientHeight * 0.13).toString() + 'px'
+      setTimeout(()=>{
+        document.getElementById('reply').style.height = submitHeight
+      }, 20)
+      console.log(submitHeight)
     }
   }
 };
@@ -367,7 +394,7 @@ button {
   position: fixed;
   left: 0;
   bottom: 0;
-  height: 10%;
+  z-index: 999;
   width: 100%;
   background: white;
   border-top: #eeeeee 1px solid;
@@ -376,16 +403,25 @@ button {
 }
 .comment-function {
   width: 100%;
-  height: 35%;
+  height: 50%;
   display: flex;
   flex-direction: row;
 }
 .toSomebody-container {
-  width: 70%;
+  width: 40%;
   height: 100%;
+  margin-left: 1rem;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.close {
+  font-size: 1rem;
+  background: #CCCCCC;
 }
 .private-button {
-  width: 30%;
+  width: 40%;
   height: 100%;
   margin-right: 1.5rem;
   display: flex;
@@ -393,12 +429,9 @@ button {
   justify-content: flex-end;
   align-items: center;
 }
-.private-button input {
-  margin-right: 0.5rem;
-}
 .comment {
   width: 100%;
-  height: 65%;
+  height: 50%;
 }
 .comment input {
   width: 75%;
@@ -414,7 +447,47 @@ button {
   width: 15%;
   font-size: 1.2rem;
 }
-.close {
-  background: #eeeeee;
+.radios-conatainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.option-container {
+  width: 50%;
+  height: 100%;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+.radio {
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid #888888;
+}
+.radio-inner {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+}
+.beSelect {
+  background: black;
+}
+.notbeSelect {
+  background: white;
+}
+.over-main {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>

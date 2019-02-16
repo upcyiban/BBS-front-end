@@ -2,14 +2,6 @@
   <div class="main-container dy_flex">
     <textarea autofocus id="byDY" v-model="details" placeholder="提供你的疑惑、问题相关的详细信息，以便老师能更好的帮助到你">
     </textarea>
-    <div class="radios-conatainer">
-      <div class="option-container" v-for="i in 2" :key="i" @click="setprivate(i)">
-        <div class="radio inner-center">
-          <div class="radio-inner" :class="radioinner[i-1]">
-          </div>
-        </div>{{optionInfos[i-1]}}
-      </div>
-    </div>
     <div class="submit-container inner-center">
       <input type="button" id="DY_button" value="确认提问" @click="submitQuiz">
     </div>
@@ -23,9 +15,6 @@ export default {
     return {
       details: '',
       user: '',
-      optionInfos: [' 公开  （所有人可见）', ' 私密  （问题以及回复仅提问者与老师可见）'],
-      radioinner: ['beSelect', 'notbeSelect'],
-      isopen: 1
     }
   },
   created(){
@@ -33,16 +22,6 @@ export default {
     this.user = '2323'
   },
   methods:{
-    setprivate (i) {
-      console.log(11)
-      this.isopen = (i + 1) % 2
-      for (let n = 0;n < 2;n++) {
-        this.$set(this.radioinner, n, 'notbeSelect')
-        if (n == i-1) {
-          this.$set(this.radioinner, n, 'beSelect')
-        }
-      }
-    },
     submitQuiz () {
       let url = 'http://yb.upc.edu.cn/forum/quest'
       let data = {
@@ -73,56 +52,25 @@ export default {
 }
 #byDY{
   width: 90%;
-  height: 65%;
+  height: 80%;
   margin-top: 5%;
   padding: 4%;
-  border: 1px solid #666666;
+  border: 1px solid #0e0d0d;
   outline: none;
   border-radius:15px; 
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   box-sizing: border-box;
-}
-.radios-conatainer {
-  width: 93%;
-  height: 20%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.option-container {
-  width: 100%;
-  height: 30%;
-  font-size: 1rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.radio {
-  height: 1.2rem;
-  width: 1.2rem;
-  margin-right: 0.5rem;
-  border-radius: 50%;
-  border: 1px solid #888888;
-}
-.radio-inner {
-  width: 80%;
-  height: 80%;
-  border-radius: 50%;
-}
-.beSelect {
-  background: black;
-}
-.notbeSelect {
-  background: white;
 }
 .submit-container {
   width: 100%;
-  height: 10%;
+  height: 15%;
+  position: fixed;
+  bottom: 0;
 }
 #DY_button{
   display:block;
   width:90%;
-  height: 90%;
+  height: 50%;
   outline: none;
   font-size: 1.4rem;
   border: 1px #666666 solid;
