@@ -56,6 +56,7 @@ export default {
     sessionStorage.setItem("verify_request", verify_request)
     var APPID = '32eade4df8222ddb'
     var CALLBACK = 'http://f.yiban.cn/iapp306340'
+    /*
     if (
       verify_request == -1 ||
       verify_request == "" ||
@@ -72,6 +73,8 @@ export default {
       sessionStorage.setItem('userId', '113')
       this.getPageInfos()
     }
+    */
+   this.getPageInfos()
   },
   mounted () {
     Bus.$emit('pageInfo', this.pageinfos)

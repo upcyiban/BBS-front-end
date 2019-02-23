@@ -32,6 +32,7 @@ export default {
         console.log(rsp)
         if (rsp.data.code == 1) {
           alert('提问成功！')
+          this.details = ''
         }
       })
     }

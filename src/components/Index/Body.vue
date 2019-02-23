@@ -7,7 +7,7 @@
             <img src="../../assets/images/头像.jpg" alt="">
           </div>
           <div class="nick-time">
-            <div class="nickname">{{item.user}}</div>
+            <div class="nickname">{{item.user.nick}}</div>
             <div class="time">{{item.time}}</div>
           </div>
           <div class="isopen-container">
@@ -24,7 +24,7 @@
         <div class="first-comment-container inner-center" v-if="item.f_comment">
           <div class="first-comment-frame inner-center">
             <div class="first-comment">
-              <span>{{item.f_comment.user}}：</span>{{item.f_comment.details}}
+              <span>{{item.f_comment.user.nick}}：</span>{{item.f_comment.details}}
             </div>
           </div>
         </div>

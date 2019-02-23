@@ -7,7 +7,7 @@
             <img src="../assets/images/头像.jpg" alt>
           </div>
           <div class="owner-info">
-            <div class="owner-nickname">{{postOwner.user}}</div>
+            <div class="owner-nickname">{{postOwner.user.nick}}</div>
             <div class="owner-time">{{postOwner.time}}</div>
           </div>
         </div>
@@ -21,7 +21,7 @@
           <div class="first-comment-info">
             <div class="first-comment-owner">
               <div class="first-owner-container">
-                <span>{{item[0].YBID_t}}</span>
+                <span>{{item[0].nick_t}}</span>
                 <div class="istop-container">
                   <img src="../assets/images/置顶.png" alt>
                 </div>
@@ -43,14 +43,14 @@
                     <div class="second-avatar">
                       <img src="../assets/images/头像.jpg" alt>
                     </div>
-                    <div class="second-nickname">{{second.YBID_t}}</div>
+                    <div class="second-nickname">{{second.nick_t}}</div>
                     <div class="reply-second">
                       <button @click="toEditComment(second.YBID_t, item[0].id, false)">回复</button>
                     </div>
                   </div>
                   <div class="second-content">
                     <span class="isreply" v-if="second.YBID_a != item[0].YBID_t">回复
-                      <span>{{second.YBID_a}}</span>：
+                      <span>{{second.nick_a}}</span>：
                     </span>
                     {{second.details}}
                     <div class="second-time owner-time">{{second.time}}</div>
@@ -102,7 +102,6 @@ export default {
       YBID_a: "",
       question: "",
       comment: "",
-      details: "",
       onshow: 1,
       isToOwner: true,
       optionInfos: ['私密', '公开'],
@@ -111,12 +110,12 @@ export default {
   },
   created() {
     document.title = "详情";
-    var postsid = this.$route.query.id;
-    var yb_uid = this.$route.query.user;
-    this.postOwner = this.$route.query.postsinfo;
-    this.YBID_t = this.$route.query.user;
-    this.YBID_a = parseInt(this.$route.query.postsinfo.user);
-    this.question = this.$route.query.id;
+    var postsid = this.$route.query.id
+    var yb_uid = this.$route.query.user
+    this.postOwner = this.$route.query.postsinfo
+    this.YBID_t = this.$route.query.user
+    this.YBID_a = this.$route.query.postsinfo.user.YBID
+    this.question = this.$route.query.id
     console.log(postsid);
     console.log(yb_uid);
     let url = "http://yb.upc.edu.cn/forum/getDetails";
@@ -158,12 +157,15 @@ export default {
         console.log(rsp);
         if (rsp.data.code == 1) {
           alert('回复成功！')
+          this.commentContent = ''
+          this.isToOwner = true;
+          this.YBID_a = this.$route.query.postsinfo.user
         }
       });
     },
     ToOwner() {
       this.isToOwner = true;
-      this.YBID_a = parseInt(this.$route.query.postsinfo.user);
+      this.YBID_a = this.$route.query.postsinfo.user
     },
     setprivate (i) {
       console.log(11)
